@@ -1,4 +1,5 @@
 import os
+import re
 
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from dotenv import load_dotenv
@@ -24,6 +25,17 @@ model = AutoModelForCausalLM.from_pretrained(
 
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, use_fast=True)
 
+def extract_clean_text(text):
+    # Define the regex pattern
+    pattern = r'(?<=\[\/INST\])(.*)'
+    # Use re.search to find the match
+    match = re.search(pattern, input_text)
+    
+    # Extract the text if a match is found
+    if match:
+        extracted_text = match.group(1)
+        return extracted_text
+
 
 def get_completion(prompt, max_new_tokens=4000, do_sample=False):
     """Generate a completion for the given prompt using a pre-trained language model."""
@@ -32,4 +44,5 @@ def get_completion(prompt, max_new_tokens=4000, do_sample=False):
     generate_kwargs = {"max_new_tokens": max_new_tokens, "do_sample": do_sample}
     gen_out = model.generate(**model_inputs, **generate_kwargs)
     response = tokenizer.decode(gen_out[0], skip_special_tokens=True)
-    return response
+    clean_response = extract_clean_text(response)
+    return clean_response
