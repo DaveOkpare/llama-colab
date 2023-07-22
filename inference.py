@@ -1,4 +1,9 @@
+import os
+
 from transformers import AutoModelForCausalLM, AutoTokenizer
+from dotenv import load_dotenv
+
+load_dotenv()
 
 MODEL_NAME = "meta-llama/Llama-2-7b-chat-hf"
 
@@ -8,6 +13,8 @@ PROMPT_TEMPLATE = """
 ### response:
 """
 
+os.environ["HUGGING_FACE_HUB_TOKEN"] = os.getenv("HUGGING_FACE_HUB_TOKEN")
+
 model = AutoModelForCausalLM.from_pretrained(
     MODEL_NAME,
     device_map="auto",
@@ -16,6 +23,7 @@ model = AutoModelForCausalLM.from_pretrained(
 )
 
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, use_fast=True)
+
 
 def get_completion(prompt, max_new_tokens=4000, do_sample=False):
     """Generate a completion for the given prompt using a pre-trained language model."""
