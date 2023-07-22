@@ -3,3 +3,4 @@ bitsandbytes>=0.39.0
 accelerate>=0.12.0
 git+https://github.com/huggingface/transformers.git
 # git+https://github.com/huggingface/huggingface_hub
+pyngrok
