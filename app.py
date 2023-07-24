@@ -12,19 +12,21 @@ os.environ["HUGGING_FACE_HUB_TOKEN"] = os.getenv("HUGGING_FACE_HUB_TOKEN")
 
 MODEL_NAME = "meta-llama/Llama-2-7b-chat-hf"
 
-
 st.title("Chat with Llama")
 
 with st.spinner("Initializing the llama..."):
-    model = AutoModelForCausalLM.from_pretrained(
-        MODEL_NAME,
-        device_map="auto",
-        load_in_4bit=True,
-        rope_scaling={"type": "dynamic", "factor": 2.0},
-    )
+    if "model" not in st.session_state or "tokenizer" not in st.session_state:
+        model = AutoModelForCausalLM.from_pretrained(
+            MODEL_NAME,
+            device_map="auto",
+            load_in_4bit=True,
+            rope_scaling={"type": "dynamic", "factor": 2.0},
+        )
 
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, use_fast=True)
+        tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, use_fast=True)
 
+        st.session_state["model"] = model
+        st.session_state["tokenizer"] = tokenizer
 
 # Initialize chat history
 if "messages" not in st.session_state:
