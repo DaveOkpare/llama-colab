@@ -1,8 +1,9 @@
 import os
-import re
 
-from transformers import AutoModelForCausalLM, AutoTokenizer
 from dotenv import load_dotenv
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
+from utils import extract_clean_text
 
 load_dotenv()
 
@@ -16,28 +17,21 @@ PROMPT_TEMPLATE = """
 
 os.environ["HUGGING_FACE_HUB_TOKEN"] = os.getenv("HUGGING_FACE_HUB_TOKEN")
 
-model = AutoModelForCausalLM.from_pretrained(
-    MODEL_NAME,
-    device_map="auto",
-    load_in_4bit=True,
-    rope_scaling={"type": "dynamic", "factor": 2.0},
-)
 
-tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, use_fast=True)
+def init_checkpoints(model_name=MODEL_NAME):
+    model = AutoModelForCausalLM.from_pretrained(
+        model_name,
+        device_map="auto",
+        load_in_4bit=True,
+        rope_scaling={"type": "dynamic", "factor": 2.0},
+    )
 
-def extract_clean_text(text):
-    # Define the regex pattern
-    pattern = r'(?<=\[\/INST\])(.*)'
-    # Use re.search to find the match
-    match = re.search(pattern, input_text)
-    
-    # Extract the text if a match is found
-    if match:
-        extracted_text = match.group(1)
-        return extracted_text
+    tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=True)
+
+    return model, tokenizer
 
 
-def get_completion(prompt, max_new_tokens=4000, do_sample=False):
+def get_completion(prompt, tokenizer, model, max_new_tokens=4000, do_sample=False):
     """Generate a completion for the given prompt using a pre-trained language model."""
     prompt = PROMPT_TEMPLATE.format(prompt)
     model_inputs = tokenizer(prompt, return_tensors="pt").to("cuda:0")
