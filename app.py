@@ -4,11 +4,11 @@ from inference import init_checkpoints, get_completion
 
 st.title("Chat with Llama")
 
-model, tokenizer = None, None
-
-if model is None or tokenizer is None:
+if 'model' not in st.session_state or 'tokenizer' not in st.session_state :
     with st.spinner("Initializing the llama..."):
-        model, tokenizer = init_checkpoints()
+        st.session_state['model'], st.session_state['tokenizer'] = init_checkpoints()
+
+model, tokenizer = st.session_state['model'], st.session_state['tokenizer']
 
 # Initialize chat history
 if "messages" not in st.session_state:
