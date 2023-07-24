@@ -1,34 +1,11 @@
-import os
-
-from dotenv import load_dotenv
-from transformers import AutoModelForCausalLM, AutoTokenizer
-
 from utils import extract_clean_text
 
-load_dotenv()
-
-MODEL_NAME = "meta-llama/Llama-2-7b-chat-hf"
 
 PROMPT_TEMPLATE = """
 ### system: You are an helpful assistant who returns correct and concise answers.
 ### human: {}
 ### response:
 """
-
-os.environ["HUGGING_FACE_HUB_TOKEN"] = os.getenv("HUGGING_FACE_HUB_TOKEN")
-
-
-def init_checkpoints(model_name=MODEL_NAME):
-    model = AutoModelForCausalLM.from_pretrained(
-        model_name,
-        device_map="auto",
-        load_in_4bit=True,
-        rope_scaling={"type": "dynamic", "factor": 2.0},
-    )
-
-    tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=True)
-
-    return model, tokenizer
 
 
 def get_completion(prompt, tokenizer, model, max_new_tokens=4000, do_sample=False):
