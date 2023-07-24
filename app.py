@@ -14,8 +14,8 @@ MODEL_NAME = "meta-llama/Llama-2-7b-chat-hf"
 
 st.title("Chat with Llama")
 
-with st.spinner("Initializing the llama..."):
-    if "model" not in st.session_state or "tokenizer" not in st.session_state:
+if "model" not in st.session_state or "tokenizer" not in st.session_state:
+    with st.spinner("Initializing the llama..."):
         model = AutoModelForCausalLM.from_pretrained(
             MODEL_NAME,
             device_map="auto",
@@ -25,8 +25,8 @@ with st.spinner("Initializing the llama..."):
 
         tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, use_fast=True)
 
-        st.session_state["model"] = model
-        st.session_state["tokenizer"] = tokenizer
+        st.session_state["model"] = MODEL_NAME
+        st.session_state["tokenizer"] = MODEL_NAME
 
 # Initialize chat history
 if "messages" not in st.session_state:
