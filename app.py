@@ -2,11 +2,13 @@ import streamlit as st
 
 from inference import init_checkpoints, get_completion
 
-with st.spinner("Initializing the llama..."):
-    model, tokenizer = init_checkpoints()
+st.title("Chat with Llama")
 
+model, tokenizer = None, None
 
-st.title("Llama Bot")
+if model is None or tokenizer is None:
+    with st.spinner("Initializing the llama..."):
+        model, tokenizer = init_checkpoints()
 
 # Initialize chat history
 if "messages" not in st.session_state:
